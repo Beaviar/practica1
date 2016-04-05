@@ -11,6 +11,11 @@ if(isset($_GET['id_categoria']) && $_GET['id_categoria'] != '')
 {
 	$_SESSION['id_categoria'] = $_GET['id_categoria'];
 }
+if(isset($_GET['id_puesto']) && $_GET['id_puesto'] != '')
+{
+	$_SESSION['id_puesto'] = $_GET['id_puesto'];
+}
+
 
 
 
@@ -32,7 +37,7 @@ if(isset($_GET['id_categoria']) && $_GET['id_categoria'] != '')
 <div class="container">
 
 
-<?php if( !isset($_SESSION['id_usuario']) || !isset($_SESSION['id_categoria']) ) : ?> 
+<?php if( !isset($_SESSION['id_usuario']) || !isset($_SESSION['id_categoria']) || !isset($_SESSION['id_puesto']) ) : ?> 
 	<h1>Log in</h1>
 	<div class="jumbotron">
     <form role="form" method="get" >
@@ -84,6 +89,30 @@ if(isset($_GET['id_categoria']) && $_GET['id_categoria'] != '')
             
         </select>
       </div>
+      <div class="form-group">
+      <?php
+	  
+      $sql = "SELECT * FROM puestos WHERE ip = '" . $_SERVER['REMOTE_ADDR'] . "' LIMIT 1";
+			$result = mysqli_query($conn, $sql);
+			
+			if (mysqli_num_rows($result) > 0) {
+				// output data of each row
+				$row = mysqli_fetch_assoc($result);
+				echo "PUESTO: " . $row['nombre'];
+				$id_puesto = $row['id_puesto']; 
+
+			} 
+			else
+			{
+				echo "ERROR: Tu puesto no está dado de alta";
+				$id_puesto = "";
+			}
+		
+			
+	  ?>
+      	 <input type="hidden" name="id_puesto" value="<?php echo $id_puesto ?>">
+      
+      </div>
 
       <button type="submit" class="btn btn-default">Submit</button>
     </form>
@@ -94,23 +123,21 @@ if(isset($_GET['id_categoria']) && $_GET['id_categoria'] != '')
  <h1>Adminsitración</h1>
  <h2>Usuario: <?php echo $_SESSION['id_usuario'] ?></h2>
  <h2>Categoría: <?php echo $_SESSION['id_categoria'] ?></h2>
+ <h2>Id Puesto: <?php echo $_SESSION['id_puesto'] ?></h2>
+
+ <?php
+ $numero = rand(1,100);
  
- <h3><span id="demo"></span></h3>
- <script>
- 
- setInterval(loadDoc,3000);
- 
- function loadDoc() {
-  var xhttp = new XMLHttpRequest();
-  xhttp.onreadystatechange = function() {
-    if (xhttp.readyState == 4 && xhttp.status == 200) {
-     document.getElementById("demo").innerHTML = xhttp.responseText;
-    }
-  };
-  xhttp.open("GET", "check.php", true);
-  xhttp.send();
-} 
-</script>
+ $sql = "INSERT INTO llamamiento (id_llamamiento, id_usuario, id_categoria, id_puesto, tiempo, numero)
+VALUES (NULL, '" . $_SESSION['id_usuario'] . "', '" . $_SESSION['id_categoria'] . "','" . $_SESSION['id_puesto'] . "', '" . time() . "', '" . $numero . "')";
+echo $sql;
+
+if (mysqli_query($conn, $sql)) {
+    echo "New record created successfully";
+} else {
+    echo "Error: " . $sql . "<br>" . mysqli_error($conn);
+}
+ ?> 
  
  <?php endif ?>
 

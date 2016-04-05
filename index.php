@@ -16,12 +16,20 @@ include_once('include/conf.php');
 
 <div class="container">
 
-<h1><span id="demo"></span></h1>
-<h2>Último número:<span id="numero"></span></h2>
+
+<h1>Último número:<span id="numero"></span></h1>
+<h2><span id="demo"></span></h2>
 
 
 </div>
 
+
+
+<!--sonido de llamada-->
+<audio autoplay>
+  <source src="audio/suspense.wav" type="audio/mpeg">
+Your browser does not support the audio element.
+</audio>
 
 <script>
 
@@ -45,22 +53,29 @@ var ultimo = "<?php echo $tiempo_ultimo ?>";
 
 document.getElementById("numero").innerHTML = "<?php echo $numero ?>";
 
-setInterval(loadDoc, 5000);
+//Ejecutamos la función de comprobación cada 5 segundos (5000 milisecs)
+setInterval(loadDoc, 1000);
 
 function loadDoc() {
   var xhttp = new XMLHttpRequest();
   xhttp.onreadystatechange = function() {
     if (xhttp.readyState == 4 && xhttp.status == 200) {
-     document.getElementById("demo").innerHTML = xhttp.responseText;
-	 
-	 if(ultimo != xhttp.responseText)
-	 {
-		location.reload();
-	 }
-	 else
-	 {
-		 console.log('sigue igual');
-	 }
+		
+     	console.log('Comprobado. Última llamada: ' + xhttp.responseText);
+	 	//Comprobamos si la última llamada coincide con la que obtuvimos al cargar la página
+		if(ultimo != xhttp.responseText)
+		 {
+			//Recargamos la página, al modificarse la base de datos
+			location.reload();
+		 }
+		 else
+		 {
+			 //Calculamos el tiempo que ha pasado
+			 var tiempo_actual = Math.floor(Date.now() / 1000);
+			 var tiempo_pasado = tiempo_actual - ultimo;
+			 console.log('sigue igual' + tiempo_pasado);
+			 document.getElementById('demo').innerHTML = "Segundos transcurridos: " + tiempo_pasado;
+		 }
 	 
 	 
     }
