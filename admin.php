@@ -1,6 +1,6 @@
-// Esto lo hemos cambiado
 
 <?php 
+// Esto lo hemos cambiado
 include_once('include/conf.php');
 // Start the session
 session_start();
